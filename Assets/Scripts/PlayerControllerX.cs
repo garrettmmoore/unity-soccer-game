@@ -1,12 +1,11 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerControllerX : MonoBehaviour
 {
-    private Rigidbody playerRb;
+    private Rigidbody _playerRb;
     private float speed = 500;
-    private GameObject focalPoint;
+    private GameObject _focalPoint;
 
     public bool hasPowerup;
     public GameObject powerupIndicator;
@@ -15,21 +14,35 @@ public class PlayerControllerX : MonoBehaviour
     private float normalStrength = 10; // how hard to hit enemy without powerup
     private float powerupStrength = 25; // how hard to hit enemy with powerup
     
-    void Start()
+    private void Start()
     {
-        playerRb = GetComponent<Rigidbody>();
-        focalPoint = GameObject.Find("Focal Point");
+        _playerRb = GetComponent<Rigidbody>();
+        _focalPoint = GameObject.Find("Focal Point");
     }
 
-    void FixedUpdate()
+    // private void FixedUpdate()
+    // {
+    //     // Add force to player in direction of the focal point (and camera)
+    //     var verticalInput = Input.GetAxis("Vertical");
+    //     playerRb.AddForce(focalPoint.transform.forward * verticalInput * speed * Time.deltaTime);
+    //
+    //     // Set powerup indicator position to beneath player
+    //     powerupIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
+    //
+    // }
+
+    private void FixedUpdate()
     {
-        // Add force to player in direction of the focal point (and camera)
-        float verticalInput = Input.GetAxis("Vertical");
-        playerRb.AddForce(focalPoint.transform.forward * verticalInput * speed * Time.deltaTime); 
+        // Move the player in the direction that our camera is pointing in
+        var forwardInput = Input.GetAxis("Vertical");
+        var horizontalInput = Input.GetAxis("Horizontal");
 
-        // Set powerup indicator position to beneath player
-        powerupIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
+        _playerRb.AddForce(_focalPoint.transform.forward * (forwardInput * speed * Time.deltaTime));
+        _playerRb.AddForce(_focalPoint.transform.right * (horizontalInput * speed * Time.deltaTime));
 
+        // The powerUpIndicator follows the player's position
+        powerupIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
+        powerupIndicator.transform.Rotate(new Vector3(0, 2, 0));
     }
 
     // If Player collides with powerup, activate powerup
@@ -37,14 +50,16 @@ public class PlayerControllerX : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Powerup"))
         {
-            Destroy(other.gameObject);
             hasPowerup = true;
             powerupIndicator.SetActive(true);
+
+            Destroy(other.gameObject);
+            StartCoroutine(PowerupCooldown());
         }
     }
 
     // Coroutine to count down powerup duration
-    IEnumerator PowerupCooldown()
+    private IEnumerator PowerupCooldown()
     {
         yield return new WaitForSeconds(powerUpDuration);
         hasPowerup = false;
