@@ -21,7 +21,7 @@ public class PlayerControllerX : MonoBehaviour
         focalPoint = GameObject.Find("Focal Point");
     }
 
-    void Update()
+    void FixedUpdate()
     {
         // Add force to player in direction of the focal point (and camera)
         float verticalInput = Input.GetAxis("Vertical");
@@ -52,12 +52,12 @@ public class PlayerControllerX : MonoBehaviour
     }
 
     // If Player collides with enemy
-    private void OnCollisionEnter(Collision other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            Rigidbody enemyRigidbody = other.gameObject.GetComponent<Rigidbody>();
-            Vector3 awayFromPlayer =  transform.position - other.gameObject.transform.position; 
+            var enemyRigidbody = collision.gameObject.GetComponent<Rigidbody>();
+            var awayFromPlayer = collision.gameObject.transform.position - transform.position ;
            
             if (hasPowerup) // if have powerup hit enemy with powerup force
             {
