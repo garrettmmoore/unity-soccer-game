@@ -4,16 +4,16 @@ using UnityEngine;
 public class PlayerControllerX : MonoBehaviour
 {
     private Rigidbody _playerRb;
-    private float speed = 500;
+    private const float Speed = 500;
     private GameObject _focalPoint;
 
-    public bool hasPowerup;
-    public GameObject powerupIndicator;
+    public bool hasPowerUp;
+    public GameObject powerUpIndicator;
     public int powerUpDuration = 5;
 
-    private float normalStrength = 10; // how hard to hit enemy without powerup
-    private float powerupStrength = 25; // how hard to hit enemy with powerup
-    
+    private const float NormalStrength = 10; // how hard to hit enemy without powerUp
+    private const float PowerUpStrength = 25; // how hard to hit enemy with powerUp
+
     private void Start()
     {
         _playerRb = GetComponent<Rigidbody>();
@@ -26,8 +26,8 @@ public class PlayerControllerX : MonoBehaviour
     //     var verticalInput = Input.GetAxis("Vertical");
     //     playerRb.AddForce(focalPoint.transform.forward * verticalInput * speed * Time.deltaTime);
     //
-    //     // Set powerup indicator position to beneath player
-    //     powerupIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
+    //     // Set powerUp indicator position to beneath player
+    //     powerUpIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
     //
     // }
 
@@ -37,33 +37,33 @@ public class PlayerControllerX : MonoBehaviour
         var forwardInput = Input.GetAxis("Vertical");
         var horizontalInput = Input.GetAxis("Horizontal");
 
-        _playerRb.AddForce(_focalPoint.transform.forward * (forwardInput * speed * Time.deltaTime));
-        _playerRb.AddForce(_focalPoint.transform.right * (horizontalInput * speed * Time.deltaTime));
+        _playerRb.AddForce(_focalPoint.transform.forward * (forwardInput * Speed * Time.deltaTime));
+        _playerRb.AddForce(_focalPoint.transform.right * (horizontalInput * Speed * Time.deltaTime));
 
         // The powerUpIndicator follows the player's position
-        powerupIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
-        powerupIndicator.transform.Rotate(new Vector3(0, 2, 0));
+        powerUpIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
+        powerUpIndicator.transform.Rotate(new Vector3(0, 2, 0));
     }
 
-    // If Player collides with powerup, activate powerup
+    // If Player collides with powerUp, activate powerUp
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Powerup"))
+        if (other.gameObject.CompareTag("PowerUp"))
         {
-            hasPowerup = true;
-            powerupIndicator.SetActive(true);
+            hasPowerUp = true;
+            powerUpIndicator.SetActive(true);
 
             Destroy(other.gameObject);
-            StartCoroutine(PowerupCooldown());
+            StartCoroutine(PowerUpCooldown());
         }
     }
 
-    // Coroutine to count down powerup duration
-    private IEnumerator PowerupCooldown()
+    // Coroutine to count down powerUp duration
+    private IEnumerator PowerUpCooldown()
     {
         yield return new WaitForSeconds(powerUpDuration);
-        hasPowerup = false;
-        powerupIndicator.SetActive(false);
+        hasPowerUp = false;
+        powerUpIndicator.SetActive(false);
     }
 
     // If Player collides with enemy
@@ -74,13 +74,13 @@ public class PlayerControllerX : MonoBehaviour
             var enemyRigidbody = collision.gameObject.GetComponent<Rigidbody>();
             var awayFromPlayer = collision.gameObject.transform.position - transform.position ;
            
-            if (hasPowerup) // if have powerup hit enemy with powerup force
+            if (hasPowerUp) // if have powerUp hit enemy with powerUp force
             {
-                enemyRigidbody.AddForce(awayFromPlayer * powerupStrength, ForceMode.Impulse);
+                enemyRigidbody.AddForce(awayFromPlayer * PowerUpStrength, ForceMode.Impulse);
             }
-            else // if no powerup, hit enemy with normal strength 
+            else // if no powerUp, hit enemy with normal strength
             {
-                enemyRigidbody.AddForce(awayFromPlayer * normalStrength, ForceMode.Impulse);
+                enemyRigidbody.AddForce(awayFromPlayer * NormalStrength, ForceMode.Impulse);
             }
 
 
