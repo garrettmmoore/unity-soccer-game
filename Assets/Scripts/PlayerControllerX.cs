@@ -4,12 +4,15 @@ using UnityEngine;
 public class PlayerControllerX : MonoBehaviour
 {
     private Rigidbody _playerRb;
-    private const float Speed = 500;
+    private float speed = 500;
     private GameObject _focalPoint;
 
     public bool hasPowerUp;
     public GameObject powerUpIndicator;
     public int powerUpDuration = 5;
+
+    public bool hasSpeedBoost;
+    public int speedBoostDuration = 5;
 
     private const float NormalStrength = 10; // how hard to hit enemy without powerUp
     private const float PowerUpStrength = 25; // how hard to hit enemy with powerUp
@@ -37,12 +40,20 @@ public class PlayerControllerX : MonoBehaviour
         var forwardInput = Input.GetAxis("Vertical");
         var horizontalInput = Input.GetAxis("Horizontal");
 
-        _playerRb.AddForce(_focalPoint.transform.forward * (forwardInput * Speed * Time.deltaTime));
-        _playerRb.AddForce(_focalPoint.transform.right * (horizontalInput * Speed * Time.deltaTime));
+        if (Input.GetKey(KeyCode.Space))
+        {
+            hasSpeedBoost = true;
+            speed = 700;
+            StartCoroutine(SpeedBoostCooldown());
+        }
+
+        _playerRb.AddForce(_focalPoint.transform.forward * (forwardInput * speed * Time.deltaTime));
+        _playerRb.AddForce(_focalPoint.transform.right * (horizontalInput * speed * Time.deltaTime));
 
         // The powerUpIndicator follows the player's position
         powerUpIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
         powerUpIndicator.transform.Rotate(new Vector3(0, 2, 0));
+
     }
 
     // If Player collides with powerUp, activate powerUp
@@ -64,6 +75,15 @@ public class PlayerControllerX : MonoBehaviour
         yield return new WaitForSeconds(powerUpDuration);
         hasPowerUp = false;
         powerUpIndicator.SetActive(false);
+    }
+
+    // Coroutine to count down powerUp duration
+    private IEnumerator SpeedBoostCooldown()
+    {
+        yield return new WaitForSeconds(speedBoostDuration);
+        hasSpeedBoost = false;
+        speed = 500;
+        // powerUpIndicator.SetActive(false);
     }
 
     // If Player collides with enemy
