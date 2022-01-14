@@ -6,6 +6,7 @@ public class PlayerControllerX : MonoBehaviour
     private Rigidbody _playerRb;
     private float speed = 500;
     private GameObject _focalPoint;
+    public ParticleSystem _smokeParticlePrefab;
 
     public bool hasPowerUp;
     public GameObject powerUpIndicator;
@@ -21,6 +22,7 @@ public class PlayerControllerX : MonoBehaviour
     {
         _playerRb = GetComponent<Rigidbody>();
         _focalPoint = GameObject.Find("Focal Point");
+        _smokeParticlePrefab = _focalPoint.GetComponentInChildren<ParticleSystem>();
     }
 
     // private void FixedUpdate()
@@ -40,19 +42,24 @@ public class PlayerControllerX : MonoBehaviour
         var forwardInput = Input.GetAxis("Vertical");
         var horizontalInput = Input.GetAxis("Horizontal");
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space) && hasSpeedBoost == false)
         {
+            _playerRb.AddForce(_focalPoint.transform.forward * speedBoostDuration, ForceMode.Impulse);
+            _smokeParticlePrefab.Play();
             hasSpeedBoost = true;
-            speed = 700;
             StartCoroutine(SpeedBoostCooldown());
         }
 
         _playerRb.AddForce(_focalPoint.transform.forward * (forwardInput * speed * Time.deltaTime));
         _playerRb.AddForce(_focalPoint.transform.right * (horizontalInput * speed * Time.deltaTime));
 
+        // The smokeparticle follows the player's position
+        _smokeParticlePrefab.transform.position = transform.position + new Vector3(0, -0.5f, 0);
+
         // The powerUpIndicator follows the player's position
         powerUpIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
         powerUpIndicator.transform.Rotate(new Vector3(0, 2, 0));
+
 
     }
 
@@ -80,9 +87,10 @@ public class PlayerControllerX : MonoBehaviour
     // Coroutine to count down powerUp duration
     private IEnumerator SpeedBoostCooldown()
     {
-        yield return new WaitForSeconds(speedBoostDuration);
+        yield return new WaitForSeconds(2);
+        _smokeParticlePrefab.Stop();
         hasSpeedBoost = false;
-        speed = 500;
+        // speed = 500;
         // powerUpIndicator.SetActive(false);
     }
 

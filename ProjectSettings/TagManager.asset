@@ -5,8 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
-  - Powerup
   - PowerUp
+  - SmokeParticle
   layers:
   - Default
   - TransparentFX
