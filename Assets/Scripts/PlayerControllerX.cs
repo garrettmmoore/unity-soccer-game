@@ -4,9 +4,8 @@ using UnityEngine;
 public class PlayerControllerX : MonoBehaviour
 {
     private Rigidbody _playerRb;
-    private float speed = 500;
+    private const float Speed = 500;
     private GameObject _focalPoint;
-    public ParticleSystem _smokeParticlePrefab;
 
     public bool hasPowerUp;
     public GameObject powerUpIndicator;
@@ -14,6 +13,7 @@ public class PlayerControllerX : MonoBehaviour
 
     public bool hasSpeedBoost;
     public int speedBoostDuration = 5;
+    public ParticleSystem smokeParticlePrefab;
 
     private const float NormalStrength = 10; // how hard to hit enemy without powerUp
     private const float PowerUpStrength = 25; // how hard to hit enemy with powerUp
@@ -22,19 +22,8 @@ public class PlayerControllerX : MonoBehaviour
     {
         _playerRb = GetComponent<Rigidbody>();
         _focalPoint = GameObject.Find("Focal Point");
-        _smokeParticlePrefab = _focalPoint.GetComponentInChildren<ParticleSystem>();
+        smokeParticlePrefab = _focalPoint.GetComponentInChildren<ParticleSystem>();
     }
-
-    // private void FixedUpdate()
-    // {
-    //     // Add force to player in direction of the focal point (and camera)
-    //     var verticalInput = Input.GetAxis("Vertical");
-    //     playerRb.AddForce(focalPoint.transform.forward * verticalInput * speed * Time.deltaTime);
-    //
-    //     // Set powerUp indicator position to beneath player
-    //     powerUpIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
-    //
-    // }
 
     private void FixedUpdate()
     {
@@ -44,22 +33,25 @@ public class PlayerControllerX : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && hasSpeedBoost == false)
         {
+            // Give player a speed boost
             _playerRb.AddForce(_focalPoint.transform.forward * speedBoostDuration, ForceMode.Impulse);
-            _smokeParticlePrefab.Play();
+
+            // Start particle effect
+            smokeParticlePrefab.Play();
+
+            // The smoke particle effect follows the player's position
+            smokeParticlePrefab.transform.position = transform.position + new Vector3(0, -0.5f, 0);
+
             hasSpeedBoost = true;
             StartCoroutine(SpeedBoostCooldown());
         }
 
-        _playerRb.AddForce(_focalPoint.transform.forward * (forwardInput * speed * Time.deltaTime));
-        _playerRb.AddForce(_focalPoint.transform.right * (horizontalInput * speed * Time.deltaTime));
-
-        // The smokeparticle follows the player's position
-        _smokeParticlePrefab.transform.position = transform.position + new Vector3(0, -0.5f, 0);
+        _playerRb.AddForce(_focalPoint.transform.forward * (forwardInput * Speed * Time.deltaTime));
+        _playerRb.AddForce(_focalPoint.transform.right * (horizontalInput * Speed * Time.deltaTime));
 
         // The powerUpIndicator follows the player's position
         powerUpIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
         powerUpIndicator.transform.Rotate(new Vector3(0, 2, 0));
-
 
     }
 
@@ -88,10 +80,8 @@ public class PlayerControllerX : MonoBehaviour
     private IEnumerator SpeedBoostCooldown()
     {
         yield return new WaitForSeconds(2);
-        _smokeParticlePrefab.Stop();
+        smokeParticlePrefab.Stop();
         hasSpeedBoost = false;
-        // speed = 500;
-        // powerUpIndicator.SetActive(false);
     }
 
     // If Player collides with enemy

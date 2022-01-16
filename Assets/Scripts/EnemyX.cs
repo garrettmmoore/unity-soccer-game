@@ -2,13 +2,17 @@
 
 public class EnemyX : MonoBehaviour
 {
-    private float speed = 2f;
+    private float _speed;
+    private int _waveCount;
     private Rigidbody _enemyRb;
     private GameObject _playerGoal;
+
 
     // Start is called before the first frame update
     private void Start()
     {
+        _waveCount = FindObjectOfType<SpawnManagerX>().waveCount;
+        _speed += _waveCount + 2f;
         _enemyRb = GetComponent<Rigidbody>();
         _playerGoal = GameObject.Find("Player Goal");
     }
@@ -18,7 +22,7 @@ public class EnemyX : MonoBehaviour
     {
         // Set enemy direction towards player goal and move there
         var lookDirection = (_playerGoal.transform.position - transform.position).normalized;
-        _enemyRb.AddForce(lookDirection * speed);
+        _enemyRb.AddForce(lookDirection * _speed);
 
     }
 
