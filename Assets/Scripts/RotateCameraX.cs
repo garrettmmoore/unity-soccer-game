@@ -11,7 +11,8 @@ public class RotateCameraX : MonoBehaviour
         var horizontalInput = Input.GetAxis("Horizontal");
         transform.Rotate(Vector3.up, horizontalInput * Speed * Time.deltaTime);
 
-        transform.position = player.transform.position; // Move focal point with player
+        // Move focal point with player
+        transform.position = player.transform.position;
 
     }
 }

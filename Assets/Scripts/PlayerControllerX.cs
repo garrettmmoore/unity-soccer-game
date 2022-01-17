@@ -3,20 +3,20 @@ using UnityEngine;
 
 public class PlayerControllerX : MonoBehaviour
 {
-    private Rigidbody _playerRb;
     private const float Speed = 500;
-    private GameObject _focalPoint;
-
-    public bool hasPowerUp;
-    public GameObject powerUpIndicator;
-    public int powerUpDuration = 5;
-
-    public bool hasSpeedBoost;
-    public int speedBoostDuration = 5;
-    public ParticleSystem smokeParticlePrefab;
-
     private const float NormalStrength = 10; // how hard to hit enemy without powerUp
     private const float PowerUpStrength = 25; // how hard to hit enemy with powerUp
+
+    public int powerUpDuration = 5;
+    public int speedBoostDuration = 5;
+
+    public bool hasPowerUp;
+    public bool hasSpeedBoost;
+
+    private Rigidbody _playerRb;
+    private GameObject _focalPoint;
+    public GameObject powerUpIndicator;
+    public ParticleSystem smokeParticlePrefab;
 
     private void Start()
     {
@@ -90,21 +90,20 @@ public class PlayerControllerX : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             var enemyRigidbody = collision.gameObject.GetComponent<Rigidbody>();
-            var awayFromPlayer = collision.gameObject.transform.position - transform.position ;
-           
-            if (hasPowerUp) // if have powerUp hit enemy with powerUp force
+            var awayFromPlayer = collision.gameObject.transform.position - transform.position;
+
+            // If have powerUp hit enemy with powerUp force
+            if (hasPowerUp)
             {
                 enemyRigidbody.AddForce(awayFromPlayer * PowerUpStrength, ForceMode.Impulse);
             }
-            else // if no powerUp, hit enemy with normal strength
+            // If no powerUp, hit enemy with normal strength
+            else
             {
                 enemyRigidbody.AddForce(awayFromPlayer * NormalStrength, ForceMode.Impulse);
             }
 
-
         }
     }
-
-
 
 }

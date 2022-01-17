@@ -38,10 +38,11 @@ public class SpawnManagerX : MonoBehaviour
 
     private void SpawnEnemyWave(int enemiesToSpawn)
     {
-        var powerUpSpawnOffset = new Vector3(0, 0, -15); // make powerUps spawn at player end
+        // Make powerUps spawn at player end
+        var powerUpSpawnOffset = new Vector3(0, 0, -15);
 
         // If no powerUps remain, spawn a powerUp
-        if (GameObject.FindGameObjectsWithTag("PowerUp").Length == 0) // check that there are zero powerUps
+        if (GameObject.FindGameObjectsWithTag("PowerUp").Length == 0)
         {
             Instantiate(powerUpPrefab, GenerateSpawnPosition() + powerUpSpawnOffset, powerUpPrefab.transform.rotation);
         }
@@ -52,7 +53,8 @@ public class SpawnManagerX : MonoBehaviour
             Instantiate(enemyPrefab, GenerateSpawnPosition(), enemyPrefab.transform.rotation);
         }
 
-        ResetPlayerPosition(); // put player back at start
+        // Put player back at start
+        ResetPlayerPosition();
 
     }
 

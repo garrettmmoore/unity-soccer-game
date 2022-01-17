@@ -4,9 +4,9 @@ public class EnemyX : MonoBehaviour
 {
     private float _speed;
     private int _waveCount;
+
     private Rigidbody _enemyRb;
     private GameObject _playerGoal;
-
 
     // Start is called before the first frame update
     private void Start()
